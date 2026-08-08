@@ -1,4 +1,4 @@
-import { db, firebaseReady } from "./config.js";
+import { db, firebaseReady, firebaseInitError } from "./config.js";
 
 /* ---------- Data loading: Firestore first, demo fallback ---------- */
 async function loadCollection(name) {
@@ -406,6 +406,18 @@ function initParallax() {
   }, { passive: true });
 }
 
+/* ---------- Visible diagnostics: shows the real reason if live data can't load ---------- */
+function showDataWarningBanner(message) {
+  if (document.getElementById("dataWarningBanner")) return;
+  const bar = document.createElement("div");
+  bar.id = "dataWarningBanner";
+  bar.setAttribute("role", "status");
+  bar.style.cssText = "position:fixed;left:0;right:0;bottom:0;z-index:999;background:#3a1f14;color:#ffd9b3;font:600 12.5px/1.5 -apple-system,system-ui,sans-serif;padding:10px 16px;text-align:center;border-top:1px solid #c9a961;";
+  bar.innerHTML = `⚠ Showing demo content — live data failed to load (${message}). <button id="dataWarningClose" style="margin-left:10px;background:none;border:1px solid #ffd9b3;color:#ffd9b3;border-radius:6px;padding:3px 9px;font:inherit;cursor:pointer;">Dismiss</button>`;
+  document.body.appendChild(bar);
+  document.getElementById("dataWarningClose").addEventListener("click", () => bar.remove());
+}
+
 /* ---------- Boot ---------- */
 async function boot() {
   document.getElementById("year").textContent = new Date().getFullYear();
@@ -440,6 +452,10 @@ async function boot() {
   renderRows("tgGroupsList", tgGroups, "Members");
   renderContacts("contactGrid", contacts);
   renderWebsiteSection(websiteItems);
+
+  if (!firebaseReady) {
+    showDataWarningBanner(firebaseInitError || "connection did not complete on this device/network");
+  }
 }
 
 if (document.readyState === "loading") {

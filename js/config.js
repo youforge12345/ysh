@@ -38,21 +38,41 @@ export let app = null;
 export let db = null;
 export let auth = null;
 export let firebaseReady = false;
+export let authReady = false;
+export let firebaseInitError = null;
 
 if (isConfigured) {
   try {
     const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
-    const { getFirestore } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
-    const { getAuth } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
-
     app = initializeApp(firebaseConfig);
-    db = getFirestore(app);
-    auth = getAuth(app);
-    firebaseReady = true;
-    console.info("[YouForge] Firebase connected — live Firestore data will be used.");
   } catch (err) {
-    console.warn("[YouForge] Firebase failed to initialize, falling back to demo data.", err);
-    firebaseReady = false;
+    firebaseInitError = `App init failed: ${err && err.message ? err.message : err}`;
+    console.warn("[YouForge] Firebase app failed to initialize.", err);
+  }
+
+  if (app) {
+    // Firestore and Auth are initialized independently — a failure in one
+    // (e.g. Auth needing IndexedDB, which some browsers restrict) must not
+    // take down the other. The public site only needs Firestore to work.
+    try {
+      const { getFirestore } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+      db = getFirestore(app);
+      firebaseReady = true;
+      console.info("[YouForge] Firestore connected — live data will be used.");
+    } catch (err) {
+      firebaseInitError = `Firestore init failed: ${err && err.message ? err.message : err}`;
+      console.warn("[YouForge] Firestore failed to initialize, falling back to demo data.", err);
+      firebaseReady = false;
+    }
+
+    try {
+      const { getAuth } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
+      auth = getAuth(app);
+      authReady = true;
+    } catch (err) {
+      console.warn("[YouForge] Firebase Auth failed to initialize (admin login may not work here).", err);
+      authReady = false;
+    }
   }
 } else {
   console.info("[YouForge] Firebase config not set — showing demo data. Edit js/config.js to go live.");
