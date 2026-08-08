@@ -9,17 +9,15 @@
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=7">
-<link rel="stylesheet" href="css/admin.css?v=7">
+<link rel="stylesheet" href="css/style.css?v=8">
+<link rel="stylesheet" href="css/admin.css?v=8">
 </head>
 <body class="admin-body">
 
 <!-- ============= LOGIN GATE ============= -->
 <div class="admin-login" id="loginScreen">
   <form class="login-card" id="loginForm">
-    <span class="brand-seal" style="margin:0 auto 18px;">
-      <svg viewBox="0 0 60 60" class="seal-svg"><polygon points="30,3 54,16.5 54,43.5 30,57 6,43.5 6,16.5" /><text x="30" y="35" text-anchor="middle" class="seal-letters">YSH</text></svg>
-    </span>
+    <img src="images/hero-logo.jpg" alt="YouForge" class="brand-seal-img" style="margin:0 auto 18px;">
     <h1>Admin Access</h1>
     <p class="login-sub">Sign in to manage YouForge's live content.</p>
     <label>Email<input type="email" id="loginEmail" required autocomplete="username" placeholder="you@youforge.com"></label>
@@ -34,9 +32,7 @@
 <div class="admin-shell" id="adminShell" hidden>
   <header class="admin-mobile-bar">
     <span class="admin-mobile-brand">
-      <span class="brand-seal small">
-        <svg viewBox="0 0 60 60" class="seal-svg"><polygon points="30,3 54,16.5 54,43.5 30,57 6,43.5 6,16.5" /><text x="30" y="35" text-anchor="middle" class="seal-letters">YSH</text></svg>
-      </span>
+      <img src="images/hero-logo.jpg" alt="YouForge" class="brand-seal-img small">
       <span id="mobileTabTitle">Dashboard</span>
     </span>
     <button class="admin-nav-toggle" id="adminSideToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
@@ -44,10 +40,8 @@
   <div class="admin-side-backdrop" id="adminSideBackdrop"></div>
   <aside class="admin-side" id="adminSide">
     <div class="admin-brand">
-      <span class="brand-seal small">
-        <svg viewBox="0 0 60 60" class="seal-svg"><polygon points="30,3 54,16.5 54,43.5 30,57 6,43.5 6,16.5" /><text x="30" y="35" text-anchor="middle" class="seal-letters">YSH</text></svg>
-      </span>
-      <span>YSH <em>Admin</em></span>
+      <img src="images/hero-logo.jpg" alt="YouForge" class="brand-seal-img small">
+      <span>YouForge <em>Admin</em></span>
     </div>
     <nav class="admin-nav" id="adminNav">
       <button data-tab="stats">Homepage Stats</button>
@@ -262,6 +256,6 @@
 
 <div class="toast" id="toast" hidden></div>
 
-<script type="module" src="js/admin.js?v=7"></script>
+<script type="module" src="js/admin.js?v=8"></script>
 </body>
 </html>

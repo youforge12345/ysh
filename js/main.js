@@ -1,4 +1,4 @@
-import { db, firebaseReady, firebaseInitError } from "./config.js?v=7";
+import { db, firebaseReady, firebaseInitError } from "./config.js?v=8";
 
 /* ---------- Data loading: Firestore first, demo fallback ---------- */
 async function loadCollection(name) {
@@ -159,8 +159,8 @@ function applyStats(stats) {
 const BRANDED_PLACEHOLDER = "data:image/svg+xml," + encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 188">
      <rect width="300" height="188" fill="#14120e"/>
-     <polygon points="150,52 188,71 188,109 150,128 112,109 112,71" fill="none" stroke="#c9a961" stroke-width="2.5"/>
-     <text x="150" y="100" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="24" letter-spacing="-1" fill="#f4d793">YSH</text>
+     <polygon points="150,40 198,64 198,116 150,140 102,116 102,64" fill="none" stroke="#c9a961" stroke-width="2.5"/>
+     <text x="150" y="105" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="15.5" letter-spacing="-0.5" fill="#f4d793">YouForge</text>
    </svg>`
 );
 
