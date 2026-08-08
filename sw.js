@@ -1,6 +1,6 @@
 /* Bump this version any time site files change — forces old caches to clear
    and stops the browser from serving stale HTML/JS to returning visitors. */
-const CACHE = "youforge-shell-v3";
+const CACHE = "youforge-shell-v4";
 const SHELL = [
   "./",
   "./index.html",

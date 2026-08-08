@@ -1,4 +1,4 @@
-import { auth, db, firebaseReady, cloudinaryConfig, cloudinaryReady } from "./config.js";
+import { auth, db, firebaseReady, cloudinaryConfig, cloudinaryReady } from "./config.js?v=7";
 
 /* ---------- State ---------- */
 const COLLECTIONS = {

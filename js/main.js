@@ -1,4 +1,4 @@
-import { db, firebaseReady, firebaseInitError } from "./config.js";
+import { db, firebaseReady, firebaseInitError } from "./config.js?v=7";
 
 /* ---------- Data loading: Firestore first, demo fallback ---------- */
 async function loadCollection(name) {
