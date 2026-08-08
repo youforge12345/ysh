@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouForge Admin — Content Control</title>
+<link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
+<link rel="alternate icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=5">
+<link rel="stylesheet" href="css/admin.css?v=5">
+</head>
+<body class="admin-body">
+
+<!-- ============= LOGIN GATE ============= -->
+<div class="admin-login" id="loginScreen">
+  <form class="login-card" id="loginForm">
+    <span class="brand-seal" style="margin:0 auto 18px;">
+      <svg viewBox="0 0 60 60" class="seal-svg"><polygon points="30,3 54,16.5 54,43.5 30,57 6,43.5 6,16.5" /><text x="30" y="35" text-anchor="middle" class="seal-letters">YSH</text></svg>
+    </span>
+    <h1>Admin Access</h1>
+    <p class="login-sub">Sign in to manage YouForge's live content.</p>
+    <label>Email<input type="email" id="loginEmail" required autocomplete="username" placeholder="you@youforge.com"></label>
+    <label>Password<input type="password" id="loginPassword" required autocomplete="current-password" placeholder="••••••••"></label>
+    <button class="btn btn-join" type="submit">Sign In</button>
+    <p class="login-note" id="loginNote"></p>
+    <p class="login-hint">Firebase not connected yet? Edit <code>js/config.js</code> with your project keys, create a user under Authentication → Email/Password, then sign in here.</p>
+  </form>
+</div>
+
+<!-- ============= DASHBOARD ============= -->
+<div class="admin-shell" id="adminShell" hidden>
+  <header class="admin-mobile-bar">
+    <span class="admin-mobile-brand">
+      <span class="brand-seal small">
+        <svg viewBox="0 0 60 60" class="seal-svg"><polygon points="30,3 54,16.5 54,43.5 30,57 6,43.5 6,16.5" /><text x="30" y="35" text-anchor="middle" class="seal-letters">YSH</text></svg>
+      </span>
+      <span id="mobileTabTitle">Dashboard</span>
+    </span>
+    <button class="admin-nav-toggle" id="adminSideToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </header>
+  <div class="admin-side-backdrop" id="adminSideBackdrop"></div>
+  <aside class="admin-side" id="adminSide">
+    <div class="admin-brand">
+      <span class="brand-seal small">
+        <svg viewBox="0 0 60 60" class="seal-svg"><polygon points="30,3 54,16.5 54,43.5 30,57 6,43.5 6,16.5" /><text x="30" y="35" text-anchor="middle" class="seal-letters">YSH</text></svg>
+      </span>
+      <span>YSH <em>Admin</em></span>
+    </div>
+    <nav class="admin-nav" id="adminNav">
+      <button data-tab="stats">Homepage Stats</button>
+      <button data-tab="order">Section Order</button>
+      <button data-tab="text">Section Text</button>
+      <button data-tab="whatsapp_communities" class="active">WhatsApp Communities</button>
+      <button data-tab="whatsapp_groups">WhatsApp Groups</button>
+      <button data-tab="whatsapp_channels">WhatsApp Channels</button>
+      <button data-tab="telegram_channels">Telegram Channels</button>
+      <button data-tab="telegram_groups">Telegram Groups</button>
+      <button data-tab="website">Website</button>
+      <button data-tab="contacts">Contacts</button>
+    </nav>
+    <a href="index.html" class="admin-view-site">← View Live Site</a>
+    <button class="admin-logout" id="logoutBtn">Sign Out</button>
+  </aside>
+
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <div>
+        <h1 id="tabTitle">WhatsApp Communities</h1>
+        <p id="tabSub" class="admin-topbar-sub">Signed in as <span id="whoami"></span></p>
+      </div>
+      <button class="btn btn-join" id="addNewBtn">+ Add New</button>
+    </header>
+
+    <div class="admin-table-wrap" id="collectionView">
+      <table class="admin-table" id="adminTable">
+        <thead>
+          <tr>
+            <th>Order</th><th>Image</th><th>Name</th><th>Description / Value</th><th>Members</th><th>Status</th><th>Link</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="adminTableBody"></tbody>
+      </table>
+      <p class="admin-empty" id="adminEmpty" hidden>No items yet. Click "Add New" to create the first one.</p>
+    </div>
+
+    <div class="admin-stats-panel" id="statsPanel" hidden>
+      <p class="admin-stats-intro">Controls the four numbers shown at the top of the live site. Turn any of them off to hide that card entirely — the rest will resize to fill the row.</p>
+      <div class="stats-field-grid">
+        <div class="stats-field">
+          <h3>Communities</h3>
+          <label>Number<input type="text" id="stat_communities_value" placeholder="25"></label>
+          <label>Suffix<input type="text" id="stat_communities_suffix" placeholder="+"></label>
+          <label class="stats-visible-toggle"><input type="checkbox" id="stat_communities_visible"> Show on site</label>
+        </div>
+        <div class="stats-field">
+          <h3>Groups</h3>
+          <label>Number<input type="text" id="stat_groups_value" placeholder="120"></label>
+          <label>Suffix<input type="text" id="stat_groups_suffix" placeholder="+"></label>
+          <label class="stats-visible-toggle"><input type="checkbox" id="stat_groups_visible"> Show on site</label>
+        </div>
+        <div class="stats-field">
+          <h3>Channels</h3>
+          <label>Number<input type="text" id="stat_channels_value" placeholder="40"></label>
+          <label>Suffix<input type="text" id="stat_channels_suffix" placeholder="+"></label>
+          <label class="stats-visible-toggle"><input type="checkbox" id="stat_channels_visible"> Show on site</label>
+        </div>
+        <div class="stats-field">
+          <h3>Members</h3>
+          <label>Number<input type="text" id="stat_members_value" placeholder="10"></label>
+          <label>Suffix<input type="text" id="stat_members_suffix" placeholder="K+"></label>
+          <label class="stats-visible-toggle"><input type="checkbox" id="stat_members_visible"> Show on site</label>
+        </div>
+      </div>
+      <button class="btn btn-join" id="saveStatsBtn">Save Stats</button>
+      <p class="admin-topbar-sub" id="statsSavedNote"></p>
+    </div>
+
+    <div class="admin-stats-panel" id="orderPanel" hidden>
+      <p class="admin-stats-intro">Choose what shows first on the homepage — lower number = higher up the page. Hero and the stats bar always stay at the very top.</p>
+      <div class="stats-field-grid">
+        <div class="stats-field">
+          <h3>WhatsApp Communities</h3>
+          <label>Order<input type="number" id="order_communities" min="1" value="1"></label>
+        </div>
+        <div class="stats-field">
+          <h3>WhatsApp Groups</h3>
+          <label>Order<input type="number" id="order_groups" min="1" value="2"></label>
+        </div>
+        <div class="stats-field">
+          <h3>WhatsApp Channels</h3>
+          <label>Order<input type="number" id="order_channels" min="1" value="3"></label>
+        </div>
+        <div class="stats-field">
+          <h3>Telegram Channels</h3>
+          <label>Order<input type="number" id="order_telegramChannels" min="1" value="4"></label>
+        </div>
+        <div class="stats-field">
+          <h3>Telegram Groups</h3>
+          <label>Order<input type="number" id="order_telegramGroups" min="1" value="5"></label>
+        </div>
+        <div class="stats-field">
+          <h3>Contact</h3>
+          <label>Order<input type="number" id="order_contact" min="1" value="6"></label>
+        </div>
+        <div class="stats-field">
+          <h3>Website</h3>
+          <label>Order<input type="number" id="order_website" min="1" value="7"></label>
+        </div>
+      </div>
+      <button class="btn btn-join" id="saveOrderBtn">Save Section Order</button>
+      <p class="admin-topbar-sub" id="orderSavedNote"></p>
+    </div>
+
+    <div class="admin-stats-panel" id="textPanel" hidden>
+      <p class="admin-stats-intro">Edit the small badge and heading shown above each section, and show/hide each one independently. The section's items still show below either way.</p>
+      <div class="stats-field-grid">
+        <div class="stats-field">
+          <h3>WhatsApp Communities</h3>
+          <label>Badge Text<input type="text" id="text_communities_eyebrow" placeholder="WhatsApp Communities"></label>
+          <label class="stats-visible-toggle"><input type="checkbox" id="text_communities_badgeVisible"> Show badge</label>
+          <label>Heading<input type="text" id="text_communities_heading" placeholder="Communities worth joining"></label>
+          <label class="stats-visible-toggle"><input type="checkbox" id="text_communities_headingVisible"> Show heading</label>
+        </div>
+        <div class="stats-field">
+          <h3>WhatsApp Groups</h3>
+          <label>Badge Text<input type="text" id="text_groups_eyebrow" placeholder="WhatsApp Groups"></label>
+          <label class="stats-visible-toggle"><input type="checkbox" id="text_groups_badgeVisible"> Show badge</label>
+          <label>Heading<input type="text" id="text_groups_heading" placeholder="Daily signal & discussion"></label>
+          <label class="stats-visible-toggle"><input type="checkbox" id="text_groups_headingVisible"> Show heading</label>
+        </div>
+        <div class="stats-field">
+          <h3>WhatsApp Channels</h3>
+          <label>Badge Text<input type="text" id="text_channels_eyebrow" placeholder="WhatsApp Channels"></label>
+          <label class="stats-visible-toggle"><input type="checkbox" id="text_channels_badgeVisible"> Show badge</label>
+          <label>Heading<input type="text" id="text_channels_heading" placeholder="Broadcasts & updates"></label>
+          <label class="stats-visible-toggle"><input type="checkbox" id="text_channels_headingVisible"> Show heading</label>
+        </div>
+        <div class="stats-field">
+          <h3>Telegram Channels</h3>
+          <label>Badge Text<input type="text" id="text_telegramChannels_eyebrow" placeholder="Telegram Channels"></label>
+          <label class="stats-visible-toggle"><input type="checkbox" id="text_telegramChannels_badgeVisible"> Show badge</label>
+          <label>Heading<input type="text" id="text_telegramChannels_heading" placeholder="Follow the forge on Telegram"></label>
+          <label class="stats-visible-toggle"><input type="checkbox" id="text_telegramChannels_headingVisible"> Show heading</label>
+        </div>
+        <div class="stats-field">
+          <h3>Telegram Groups</h3>
+          <label>Badge Text<input type="text" id="text_telegramGroups_eyebrow" placeholder="Telegram Groups"></label>
+          <label class="stats-visible-toggle"><input type="checkbox" id="text_telegramGroups_badgeVisible"> Show badge</label>
+          <label>Heading<input type="text" id="text_telegramGroups_heading" placeholder="Talk shop, live"></label>
+          <label class="stats-visible-toggle"><input type="checkbox" id="text_telegramGroups_headingVisible"> Show heading</label>
+        </div>
+        <div class="stats-field">
+          <h3>Contact</h3>
+          <label>Badge Text<input type="text" id="text_contact_eyebrow" placeholder="Reach Us"></label>
+          <label class="stats-visible-toggle"><input type="checkbox" id="text_contact_badgeVisible"> Show badge</label>
+          <label>Heading<input type="text" id="text_contact_heading" placeholder="Need a hand?"></label>
+          <label class="stats-visible-toggle"><input type="checkbox" id="text_contact_headingVisible"> Show heading</label>
+        </div>
+        <div class="stats-field">
+          <h3>Website</h3>
+          <label>Badge Text<input type="text" id="text_website_eyebrow" placeholder="Official Website"></label>
+          <label class="stats-visible-toggle"><input type="checkbox" id="text_website_badgeVisible"> Show badge</label>
+          <label>Heading<input type="text" id="text_website_heading" placeholder="Visit our website"></label>
+          <label class="stats-visible-toggle"><input type="checkbox" id="text_website_headingVisible"> Show heading</label>
+        </div>
+      </div>
+      <button class="btn btn-join" id="saveTextBtn">Save Section Text</button>
+      <p class="admin-topbar-sub" id="textSavedNote"></p>
+    </div>
+  </main>
+</div>
+
+<!-- ============= ITEM MODAL ============= -->
+<div class="admin-modal" id="itemModal" hidden>
+  <form class="modal-card" id="itemForm">
+    <h2 id="modalTitle">Add Item</h2>
+
+    <div class="modal-row" id="typeRow" hidden>
+      <label>Contact Type
+        <select id="fContactType">
+          <option value="whatsapp">WhatsApp</option>
+          <option value="telegram">Telegram</option>
+          <option value="email">Email</option>
+          <option value="website">Website</option>
+        </select>
+      </label>
+    </div>
+
+    <label>Name<input type="text" id="fName" required placeholder="e.g. YouForge Trading Group"></label>
+    <label id="descLabel">Description<textarea id="fDescription" rows="3" placeholder="Short description shown on the card"></textarea>
+      <span class="field-hint" id="descHint" hidden>For WhatsApp/Telegram/Email, just enter the number, username, or address — the join link is built automatically. Website still needs a full link below.</span>
+    </label>
+
+    <div class="modal-row">
+      <label>Member Count<input type="text" id="fMemberCount" placeholder="e.g. 2.5K"></label>
+      <label>Display Order<input type="number" id="fOrder" value="1" min="1"></label>
+    </div>
+
+    <label>Join Link (URL)<input type="url" id="fLink" required placeholder="https://wa.me/... or https://t.me/..."></label>
+
+    <label>Image<input type="file" id="fImageFile" accept="image/*">
+      <span class="field-hint">Uploads via Cloudinary. Or paste an image URL below — if left empty, the join link's own logo/favicon is used automatically.</span>
+    </label>
+    <input type="url" id="fImageUrl" placeholder="https://example.com/image.jpg" class="field-secondary">
+    <div class="image-preview" id="imagePreview" hidden><img id="imagePreviewImg" alt="Preview"></div>
+
+    <label class="status-toggle">
+      <span>Status</span>
+      <select id="fStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select>
+    </label>
+
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" id="cancelModal">Cancel</button>
+      <button type="submit" class="btn btn-join" id="saveBtn">Save Item</button>
+    </div>
+    <p class="modal-error" id="modalError"></p>
+  </form>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script type="module" src="js/admin.js"></script>
+</body>
+</html>
