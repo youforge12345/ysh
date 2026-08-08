@@ -1,4 +1,8 @@
-import { db, firebaseReady, firebaseInitError } from "./config.js?v=8";
+import { initFirebase } from "./config.js?v=9";
+
+let db = null;
+let firebaseReady = false;
+let firebaseInitError = null;
 
 /* ---------- Data loading: Firestore first, demo fallback ---------- */
 async function loadCollection(name) {
@@ -420,6 +424,11 @@ function showDataWarningBanner(message) {
 
 /* ---------- Boot ---------- */
 async function boot() {
+  const fb = await initFirebase();
+  db = fb.db;
+  firebaseReady = fb.firebaseReady;
+  firebaseInitError = fb.firebaseInitError;
+
   document.getElementById("year").textContent = new Date().getFullYear();
   initNav();
   initParallax();

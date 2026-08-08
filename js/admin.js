@@ -1,4 +1,6 @@
-import { auth, db, firebaseReady, cloudinaryConfig, cloudinaryReady } from "./config.js?v=8";
+import { initFirebase, cloudinaryConfig, cloudinaryReady } from "./config.js?v=9";
+
+let auth = null, db = null, firebaseReady = false;
 
 /* ---------- State ---------- */
 const COLLECTIONS = {
@@ -538,4 +540,11 @@ itemForm.addEventListener("submit", async (e) => {
 });
 
 /* ---------- Boot ---------- */
-initAuth();
+async function initApp() {
+  const fb = await initFirebase();
+  auth = fb.auth;
+  db = fb.db;
+  firebaseReady = fb.firebaseReady;
+  initAuth();
+}
+initApp();

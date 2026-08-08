@@ -34,48 +34,66 @@ export const cloudinaryReady = !Object.values(cloudinaryConfig).some(v => String
 
 const isConfigured = !Object.values(firebaseConfig).some(v => String(v).startsWith("YOUR_"));
 
-export let app = null;
-export let db = null;
-export let auth = null;
-export let firebaseReady = false;
-export let authReady = false;
-export let firebaseInitError = null;
+/* -----------------------------------------------------
+   initFirebase() — deliberately NOT using top-level await.
+   Some browser/network combinations handle "top-level await +
+   dynamic import" unreliably, silently leaving importers with
+   stale values. Using a plain async function that callers
+   explicitly await sidesteps that entire class of bug — it's
+   the most universally-supported pattern there is.
+   Memoized so every caller (main.js, admin.js) shares one init.
+------------------------------------------------------ */
+let cachedInit = null;
 
-if (isConfigured) {
-  try {
-    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
-    app = initializeApp(firebaseConfig);
-  } catch (err) {
-    firebaseInitError = `App init failed: ${err && err.message ? err.message : err}`;
-    console.warn("[YouForge] Firebase app failed to initialize.", err);
-  }
+export function initFirebase() {
+  if (cachedInit) return cachedInit;
+  cachedInit = (async () => {
+    const result = {
+      app: null, db: null, auth: null,
+      firebaseReady: false, authReady: false,
+      firebaseInitError: null,
+    };
 
-  if (app) {
+    if (!isConfigured) {
+      result.firebaseInitError = "Firebase config in js/config.js still has placeholder values.";
+      console.info("[YouForge] " + result.firebaseInitError + " Showing demo data.");
+      return result;
+    }
+
+    try {
+      const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+      result.app = initializeApp(firebaseConfig);
+    } catch (err) {
+      result.firebaseInitError = `App init failed: ${err && err.message ? err.message : err}`;
+      console.warn("[YouForge] Firebase app failed to initialize.", err);
+      return result;
+    }
+
     // Firestore and Auth are initialized independently — a failure in one
     // (e.g. Auth needing IndexedDB, which some browsers restrict) must not
     // take down the other. The public site only needs Firestore to work.
     try {
       const { getFirestore } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
-      db = getFirestore(app);
-      firebaseReady = true;
+      result.db = getFirestore(result.app);
+      result.firebaseReady = true;
       console.info("[YouForge] Firestore connected — live data will be used.");
     } catch (err) {
-      firebaseInitError = `Firestore init failed: ${err && err.message ? err.message : err}`;
+      result.firebaseInitError = `Firestore init failed: ${err && err.message ? err.message : err}`;
       console.warn("[YouForge] Firestore failed to initialize, falling back to demo data.", err);
-      firebaseReady = false;
     }
 
     try {
       const { getAuth } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
-      auth = getAuth(app);
-      authReady = true;
+      result.auth = getAuth(result.app);
+      result.authReady = true;
     } catch (err) {
       console.warn("[YouForge] Firebase Auth failed to initialize (admin login may not work here).", err);
-      authReady = false;
     }
-  }
-} else {
-  console.info("[YouForge] Firebase config not set — showing demo data. Edit js/config.js to go live.");
+
+    return result;
+  })();
+
+  return cachedInit;
 }
 
 if (cloudinaryReady) {
