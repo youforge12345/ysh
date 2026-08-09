@@ -329,6 +329,19 @@ button{ font-family:inherit; }
   .mobile-tabbar{ display:flex; }
   body{ padding-bottom: 64px; }
 
+  /* Hero CTAs stay side-by-side in one row on mobile, shrunk to fit,
+     instead of stacking full-width one under another. */
+  .hero-cta{ flex-wrap:nowrap; gap:8px; width:100%; }
+  .hero-cta .btn{
+    flex:1 1 0;
+    padding:11px 6px;
+    font-size:clamp(.62rem, 2.6vw, .74rem);
+    gap:4px;
+    white-space:nowrap;
+    min-width:0;
+  }
+  .hero-cta .btn-ico{ width:15px; height:15px; flex-shrink:0; }
+
   /* Cards sit side-by-side in a horizontal scroll row instead of stacking
      full-width, one under another — matches the reference carousel layout. */
   .card-track{
