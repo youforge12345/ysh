@@ -1,28 +1,23 @@
-import { initFirebase } from "./config.js?v=9";
+import { initFirebase } from "./config.js?v=10";
 
 let db = null;
 let firebaseReady = false;
 let firebaseInitError = null;
 
-/* ---------- Data loading: Firestore first, demo fallback ---------- */
+/* ---------- Data loading: Firestore only, no demo fallback ---------- */
 async function loadCollection(name) {
-  if (firebaseReady && db) {
-    try {
-      const { collection, getDocs, query, orderBy } =
-        await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
-      const q = query(collection(db, name), orderBy("order", "asc"));
-      const snap = await getDocs(q);
-      const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      return docs.filter(d => (d.status ?? "active") === "active");
-    } catch (err) {
-      console.warn(`[YouForge] Could not load "${name}" from Firestore.`, err);
-      return [];
-    }
+  if (!firebaseReady || !db) return [];
+  try {
+    const { collection, getDocs, query, orderBy } =
+      await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+    const q = query(collection(db, name), orderBy("order", "asc"));
+    const snap = await getDocs(q);
+    const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    return docs.filter(d => (d.status ?? "active") === "active");
+  } catch (err) {
+    console.warn(`[YouForge] Could not load "${name}" from Firestore.`, err);
+    return [];
   }
-  // Firebase isn't configured at all yet — show demo placeholders so the
-  // design is visible. Once js/config.js is filled in, this branch never runs.
-  const demo = (window.YF_DEMO && window.YF_DEMO[name]) || [];
-  return demo.filter(d => (d.status ?? "active") === "active").sort((a,b) => (a.order??0)-(b.order??0));
 }
 
 /* ---------- Homepage section order (admin-controlled) ---------- */
@@ -123,22 +118,29 @@ function applySectionText(data) {
 
 /* ---------- Homepage stats (admin-controlled) ---------- */
 async function loadStats() {
+  if (!firebaseReady || !db) return null;
   const defaults = window.YF_DEFAULT_STATS || {};
-  if (firebaseReady && db) {
-    try {
-      const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
-      const snap = await getDoc(doc(db, "settings", "stats"));
-      if (snap.exists()) return { ...defaults, ...snap.data() };
-    } catch (err) {
-      console.warn("[YouForge] Could not load homepage stats, using defaults.", err);
-    }
+  try {
+    const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+    const snap = await getDoc(doc(db, "settings", "stats"));
+    if (snap.exists()) return { ...defaults, ...snap.data() };
+  } catch (err) {
+    console.warn("[YouForge] Could not load homepage stats.", err);
   }
   return defaults;
 }
 
 function applyStats(stats) {
+  const section = document.querySelector(".stats");
   const grid = document.getElementById("statsGrid");
-  if (!grid) return;
+  if (!grid || !section) return;
+
+  if (!stats) {
+    section.hidden = true;
+    return;
+  }
+  section.hidden = false;
+
   const cards = grid.querySelectorAll(".stat-card");
   let visibleCount = 0;
   cards.forEach(card => {

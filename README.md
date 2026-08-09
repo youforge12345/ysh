@@ -67,10 +67,12 @@ Contact, or Website — hides completely (heading included), not just the
 cards inside it. Add at least one active item to a collection for its
 section to reappear.
 
-Open `index.html` directly — it works out of the box with placeholder demo
-content only when Firebase isn't configured. Once Firebase is connected,
-every section shows exactly what's in Firestore — nothing else — so an empty
-collection means an empty (but graceful) section, not fake placeholder cards.
+Open `index.html` directly — the hero and header always show. Every
+data-driven section (Communities, Groups, Channels, Contacts, Website, the
+stats bar) only appears once Firebase is connected and has real content in
+it. There is no demo/fake content anywhere — if Firebase can't connect for
+any reason, those sections simply stay hidden rather than showing
+placeholder data.
 
 ## Connect Firebase (to make content live and editable)
 1. Create a project at https://console.firebase.google.com
