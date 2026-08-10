@@ -1,4 +1,4 @@
-import { initFirebase } from "./config.js?v=12";
+import { initFirebase } from "./config.js?v=15";
 
 let db = null;
 let firebaseReady = false;
@@ -425,16 +425,69 @@ function showDataWarningBanner(message) {
 }
 
 /* ---------- Boot ---------- */
-async function boot() {
-  const fb = await initFirebase();
-  db = fb.db;
-  firebaseReady = fb.firebaseReady;
-  firebaseInitError = fb.firebaseInitError;
+/* ---------- Skeleton loaders ---------- */
+function skeletonCards(count = 3) {
+  return Array.from({ length: count }).map(() => `
+    <div class="skel-card">
+      <div class="skel-img skel-shine"></div>
+      <div class="skel-body">
+        <div class="skel-line skel-shine w60"></div>
+        <div class="skel-line skel-shine w80"></div>
+        <div class="skel-line skel-shine w40"></div>
+        <div class="skel-btn skel-shine"></div>
+      </div>
+    </div>
+  `).join("");
+}
+function skeletonRows(count = 3) {
+  return Array.from({ length: count }).map(() => `
+    <div class="skel-row">
+      <div class="skel-circle skel-shine"></div>
+      <div class="skel-lines">
+        <div class="skel-line skel-shine w60"></div>
+        <div class="skel-line skel-shine w40"></div>
+      </div>
+      <div class="skel-btn skel-shine"></div>
+    </div>
+  `).join("");
+}
+function skeletonContacts(count = 4) {
+  return Array.from({ length: count }).map(() => `
+    <div class="skel-contact">
+      <div class="skel-circle skel-shine"></div>
+      <div class="skel-line skel-shine w80"></div>
+      <div class="skel-line skel-shine w60"></div>
+      <div class="skel-btn skel-shine" style="width:70%;"></div>
+    </div>
+  `).join("");
+}
+function showAllSkeletons() {
+  const cardTracks = ["communitiesTrack", "waChannelsTrack", "tgChannelsTrack", "websiteTrack"];
+  cardTracks.forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = skeletonCards(3); });
 
+  const rowLists = ["groupsList", "tgGroupsList"];
+  rowLists.forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = skeletonRows(3); });
+
+  const contactGrid = document.getElementById("contactGrid");
+  if (contactGrid) contactGrid.innerHTML = skeletonContacts(4);
+
+  document.querySelectorAll(".stat-num").forEach(el => el.classList.add("skel-shine"));
+}
+
+async function boot() {
+  // Hero, nav, and their reveal animations must appear instantly, regardless
+  // of how long (or whether) Firebase takes to connect — never gate the
+  // page's basic visual presentation behind a network call.
   document.getElementById("year").textContent = new Date().getFullYear();
   initNav();
   initParallax();
   observeReveal(document.querySelectorAll(".hero-copy, .hero-visual, .stats, .section-head"));
+  showAllSkeletons();
+
+  const fb = await initFirebase();
+  db = fb.db;
+  firebaseReady = fb.firebaseReady;
+  firebaseInitError = fb.firebaseInitError;
 
   const sectionOrder = await loadSectionOrder();
   applySectionOrder(sectionOrder);
@@ -443,6 +496,7 @@ async function boot() {
   applySectionText(sectionText);
 
   const stats = await loadStats();
+  document.querySelectorAll(".stat-num").forEach(el => el.classList.remove("skel-shine"));
   applyStats(stats);
   animateCounters();
 

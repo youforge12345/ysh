@@ -31,7 +31,7 @@
   --ease: cubic-bezier(.22,.8,.28,1);
   --dur: .6s;
 
-  --font-display: 'Cinzel', serif;
+  --font-display: 'Manrope', sans-serif;
   --font-body: 'Manrope', sans-serif;
   --font-data: 'Space Grotesk', sans-serif;
 }
@@ -288,9 +288,39 @@ button{ font-family:inherit; }
 .footer-legal{ display:flex; gap:20px; }
 .footer-legal a:hover{ color: var(--gold-2); }
 
-/* ---------- Loading skeleton ---------- */
-.skeleton{ background: linear-gradient(90deg, var(--glass) 25%, var(--glass-strong) 50%, var(--glass) 75%); background-size:200% 100%; animation: shimmerSkeleton 1.4s infinite; border-radius: var(--radius-m); min-height:220px; }
-@keyframes shimmerSkeleton{ to{ background-position: -200% 0; } }
+/* ---------- Skeleton loaders ---------- */
+@keyframes skelShimmer{ 100%{ transform: translateX(100%); } }
+.skel-shine{ position:relative; overflow:hidden; background: var(--glass-strong); }
+.skel-shine::after{
+  content:''; position:absolute; inset:0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent);
+  transform: translateX(-100%);
+  animation: skelShimmer 1.6s ease-in-out infinite;
+}
+
+/* Card-style skeleton (Communities, Channels, Website) */
+.skel-card{ border-radius: var(--radius-l); overflow:hidden; border:1px solid var(--border-hair-soft); background: var(--glass); }
+.skel-card .skel-img{ aspect-ratio:16/10; }
+.skel-card .skel-body{ padding:20px; display:flex; flex-direction:column; gap:12px; }
+.skel-line{ height:13px; border-radius:6px; }
+.skel-line.w40{ width:40%; }
+.skel-line.w60{ width:60%; }
+.skel-line.w80{ width:80%; }
+.skel-btn{ height:42px; border-radius:999px; margin-top:8px; }
+
+/* Row-style skeleton (Groups, Telegram Groups) */
+.skel-row{ display:flex; align-items:center; gap:16px; padding:16px 20px; border-radius: var(--radius-m); border:1px solid var(--border-hair-soft); background: var(--glass); margin-bottom:14px; }
+.skel-row .skel-circle{ width:56px; height:56px; border-radius:50%; flex-shrink:0; }
+.skel-row .skel-lines{ flex:1; display:flex; flex-direction:column; gap:8px; min-width:0; }
+.skel-row .skel-btn{ width:88px; height:38px; margin-top:0; flex-shrink:0; }
+
+/* Contact-card skeleton */
+.skel-contact{ padding:30px 24px; border-radius: var(--radius-l); border:1px solid var(--border-hair-soft); background: var(--glass); display:flex; flex-direction:column; align-items:center; gap:14px; }
+.skel-contact .skel-circle{ width:52px; height:52px; border-radius:50%; }
+.skel-contact .skel-line{ width:70%; }
+
+/* Stat number skeleton */
+.stat-num.skel-shine{ display:inline-block; width:64px; height:1.2em; border-radius:6px; vertical-align:middle; }
 
 /* ---------- Mobile bottom tab bar (hidden on desktop) ---------- */
 .mobile-tabbar{
