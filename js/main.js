@@ -1,4 +1,4 @@
-import { initFirebase } from "./config.js?v=15";
+import { initFirebase } from "./config.js?v=16";
 
 let db = null;
 let firebaseReady = false;
