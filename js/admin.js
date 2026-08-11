@@ -1,4 +1,4 @@
-import { initFirebase, cloudinaryConfig, cloudinaryReady } from "./config.js?v=17";
+import { initFirebase, cloudinaryConfig, cloudinaryReady } from "./config.js?v=18";
 
 let auth = null, db = null, firebaseReady = false;
 
