@@ -377,7 +377,7 @@ button{ font-family:inherit; }
   .card-track{
     display:flex;
     grid-template-columns: none;
-    gap:16px;
+    gap:10px;
     overflow-x:auto;
     overflow-y:visible;
     scroll-snap-type:x mandatory;
@@ -389,8 +389,15 @@ button{ font-family:inherit; }
   .card-track::-webkit-scrollbar{ display:none; }
   .card-track .card{
     flex:0 0 auto;
-    width:78vw;
-    max-width:300px;
+    width:38vw;
+    max-width:165px;
     scroll-snap-align:start;
   }
+  .card-track .card-body{ padding:12px; gap:6px; }
+  .card-track .card-title{ font-size:.82rem; line-height:1.25; }
+  .card-track .card-desc{ font-size:.72rem; line-height:1.35; min-height:2em; -webkit-line-clamp:2; }
+  .card-track .card-meta{ font-size:.68rem; gap:5px; }
+  .card-track .meta-ico{ width:12px; height:12px; }
+  .card-track .btn-join{ padding:8px 10px; font-size:.7rem; gap:4px; }
+  .card-track .badge{ font-size:.55rem; padding:3px 7px; top:8px; left:8px; }
 }
